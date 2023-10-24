@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<link rel="stylesheet" type="text/css" href="popup.css" />
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <title>game title</title>
+  </head>
+  <body>
+    <div class="flex-container"><h1 class="work">Work</h1><h1 class="casino">Casino</h1></div>
+    <h1>
+      <li>$</li>
+      <li id="score-text">0</li>
+      <li id="units"></li>
+    </h1>
+    <container id="work-page">
+      <!-- <h1>Gamblers Paradise</h1> -->
+      <p>
+        <li>Earnings p/second: $</li>
+        <li id="earn-per-second">0</li>
+      </p>
+      <p>
+        <li>Multiplier: </li>
+        <li id="multiplier-text">1</li>
+      </p>
+      <button class="click-button"><h2>EARN</h2></button>
+      <p>
+        <li>Workers:</li>
+        <li id="idle">0</li>
+      </p>
+      <button class="buy-button">
+        <p>Upgrade Equipment</p>
+        <p>cost: <div id="cost">$50</div></p>
+      </button>
+      <button class="passive-button">
+        <p>Hire Worker</p>
+        <p>cost: <div id="passive-cost">$50</div></p>
+      </button>
+      <br>
+      <button class="reset-button">
+        <p>reset</p>
+      </button>
+    </container>
+    <container id="casino-page">
+      <container class="spin-container"><h1 class="spin-1">7</h1><h1 class="spin-2">7</h1><h1 class="spin-3">7</h1></container>
+      <button class="spin-button"><h2>SPIN</h2></button>
+      <br>
+      <br>
+      <input type="text" id="spin-amount">
+      <br>
+      <div class="result">Result</div>
+    </container>
+  </body>
+</html>
+<script src="/popup/popup.js"></script>

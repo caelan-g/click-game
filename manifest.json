@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "gamblers paradise",
+  "description": "gmabling game for addicts",
+  "version": "1.0",
+  "action": {
+    "default_popup": "/popup/popup.html",
+    "default_icon": "/images/gamble-thumbnail.png"
+  },
+  "permissions": ["storage"]
+}
