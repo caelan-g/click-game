@@ -1,22 +1,26 @@
-let clickButton = document.querySelector(".click-button");
-let scoreText = document.getElementById("score-text");
-let multiplierText = document.getElementById("multiplier-text");
-let eps = document.getElementById("earn-per-second");
-let buyButton = document.querySelector(".buy-button");
-let buyButtonCost = document.getElementById("cost");
-let passiveButton = document.querySelector(".passive-button");
-let passiveButtonCost = document.getElementById("passive-cost");
-let resetButton = document.querySelector(".reset-button");
-let spinButton = document.querySelector(".spin-button");
-let work = document.querySelector(".work");
-let casino = document.querySelector(".casino");
-let workPage = document.getElementById("work-page");
-let casinoPage = document.getElementById("casino-page");
-let idle = document.getElementById("idle");
-let result = document.querySelector(".result");
-let num1 = document.querySelector(".spin-1");
-let num2 = document.querySelector(".spin-2");
-let num3 = document.querySelector(".spin-3");
+import * as THREE from "three";
+import { OrbitControls } from "/three/examples/jsm/controls/OrbitControls";
+animate();
+
+const clickButton = document.querySelector(".click-button");
+const scoreText = document.getElementById("score-text");
+const multiplierText = document.getElementById("multiplier-text");
+const eps = document.getElementById("earn-per-second");
+const buyButton = document.querySelector(".buy-button");
+const buyButtonCost = document.getElementById("cost");
+const passiveButton = document.querySelector(".passive-button");
+const passiveButtonCost = document.getElementById("passive-cost");
+const resetButton = document.querySelector(".reset-button");
+const spinButton = document.querySelector(".spin-button");
+const work = document.querySelector(".work");
+const casino = document.querySelector(".casino");
+const workPage = document.getElementById("work-page");
+const casinoPage = document.getElementById("casino-page");
+const idle = document.getElementById("idle");
+const result = document.querySelector(".result");
+const num1 = document.querySelector(".spin-1");
+const num2 = document.querySelector(".spin-2");
+const num3 = document.querySelector(".spin-3");
 let score = 0;
 let click = 0;
 let passive = 1;
@@ -30,7 +34,6 @@ let winType = 0;
 let winLocation = 0;
 let spinAmount;
 const gambleTime = 750; //in milliseconds
-
 workMode();
 getData();
 
@@ -322,4 +325,29 @@ function convertToMillion(labelValue) {
     Math.abs(Number(labelValue)) >= 1.0e3
     ? (Math.abs(Number(labelValue)) / 1.0e3).toFixed(2) + "K"
     : Math.abs(Number(labelValue));
+}
+
+function initScene() {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  ); //fov, aspect ratio, distance camera can see shortest then longest
+  const renderer = new THREE.WebGLRenderer({
+    canvas: document.querySelector("#bg"),
+  });
+
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.position.setZ(40);
+  camera.position.setX(-15);
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  renderer.render(scene, camera);
+  //controls.update(); //adds mouse controls
 }

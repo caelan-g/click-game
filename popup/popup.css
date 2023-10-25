@@ -16,6 +16,12 @@ body {
   margin-right: 10px;
 }
 
+canvas {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+}
+
 h1 {
 }
 
