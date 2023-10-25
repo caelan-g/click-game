@@ -1,7 +1,38 @@
-import * as THREE from "three";
-import { OrbitControls } from "/three/examples/jsm/controls/OrbitControls";
-animate();
+import * as THREE from "/node_modules/three/build/three.module.js";
+//import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls";
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+); //fov, aspect ratio, distance camera can see shortest then longest
+const renderer = new THREE.WebGLRenderer({
+  canvas: document.querySelector("#bg"),
+});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+camera.position.setZ(5);
+camera.position.setX(0);
+camera.position.setY(1);
 
+//const controls = OrbitControls(camera, renderer.domElement);
+
+const floorGeometry = new THREE.BoxGeometry(10, 1, 10);
+const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
+
+const mainLight = new THREE.AmbientLight(0xffffff);
+const mainPointLight = new THREE.PointLight(0xffffff);
+mainPointLight.position.setZ(5);
+
+const pointLightHelper = new THREE.PointLightHelper(mainPointLight);
+
+scene.add(mainLight);
+scene.add(mainPointLight);
+scene.add(floorPlane);
+
+const fps = 60;
 const clickButton = document.querySelector(".click-button");
 const scoreText = document.getElementById("score-text");
 const multiplierText = document.getElementById("multiplier-text");
@@ -44,6 +75,14 @@ resetButton.addEventListener("click", reset);
 spinButton.addEventListener("click", spin);
 work.addEventListener("click", workMode);
 casino.addEventListener("click", casinoMode);
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  //controls.update();
+  renderer.render(scene, camera);
+  //controls.update(); //adds mouse controls
+}
 
 function earn() {
   click = click + 1;
@@ -232,7 +271,8 @@ function workMode() {
 setInterval(function () {
   scoreText.textContent = convertToMillion(Math.round(score));
   multiplierText.textContent = Math.round(multiplier * 10) / 10;
-}, 10);
+  animate();
+}, 1000 / fps);
 
 setInterval(function () {
   if (modeType == 1) {
@@ -325,29 +365,4 @@ function convertToMillion(labelValue) {
     Math.abs(Number(labelValue)) >= 1.0e3
     ? (Math.abs(Number(labelValue)) / 1.0e3).toFixed(2) + "K"
     : Math.abs(Number(labelValue));
-}
-
-function initScene() {
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  ); //fov, aspect ratio, distance camera can see shortest then longest
-  const renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector("#bg"),
-  });
-
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  camera.position.setZ(40);
-  camera.position.setX(-15);
-}
-
-function animate() {
-  requestAnimationFrame(animate);
-
-  renderer.render(scene, camera);
-  //controls.update(); //adds mouse controls
 }
