@@ -2,7 +2,7 @@ import * as THREE from "/node_modules/three/build/three.module.js";
 //import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls";
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
+  30,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
@@ -12,25 +12,55 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(5);
+camera.position.setZ(1.5);
 camera.position.setX(0);
-camera.position.setY(1);
+camera.position.setY(-5);
+
+camera.rotation.x = (6.3 / 360) * 80;
 
 //const controls = OrbitControls(camera, renderer.domElement);
 
-const floorGeometry = new THREE.BoxGeometry(10, 1, 10);
-const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+const floorGeometry = new THREE.BoxGeometry(10, 1, 7);
+const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 const floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
+floorPlane.position.setX(-1);
+floorPlane.position.setY(0);
+floorPlane.position.setZ(-1);
 
-const mainLight = new THREE.AmbientLight(0xffffff);
+const buildingGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0xff7a79 });
+const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+building.position.setX(0);
+building.position.setY(0);
+building.position.setZ(0.5);
+
+const islandGeometry = new THREE.BoxGeometry(1, 1, 0.5);
+const islandMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+const island = new THREE.Mesh(islandGeometry, islandMaterial);
+island.position.setX(0);
+island.position.setY(0);
+island.position.setZ(0);
+island.rotation.y = 0;
+
+const ambientLight = new THREE.AmbientLight(0xfffff, 0.1);
+const mainLight = new THREE.DirectionalLight(0xe6d58b, 1);
 const mainPointLight = new THREE.PointLight(0xffffff);
-mainPointLight.position.setZ(5);
+mainLight.position.setZ(10);
+mainLight.position.setX(5);
+mainLight.position.setY(0);
+mainPointLight.position.setZ(-1);
+mainPointLight.position.setX(1);
+mainPointLight.position.setY(3);
 
 const pointLightHelper = new THREE.PointLightHelper(mainPointLight);
 
 scene.add(mainLight);
-scene.add(mainPointLight);
-scene.add(floorPlane);
+//scene.add(mainPointLight);
+scene.add(ambientLight);
+//scene.add(floorPlane);
+scene.add(building);
+scene.add(island);
+//scene.add(pointLightHelper);
 
 const fps = 60;
 const clickButton = document.querySelector(".click-button");
@@ -79,10 +109,18 @@ casino.addEventListener("click", casinoMode);
 function animate() {
   requestAnimationFrame(animate);
 
+  island.rotation.z += 0.01;
+  building.rotation.z += 0.01;
+  //camera.rotation.y += 0.01;
+  //console.log(camera.rotation.y);
+
+  //console.log(island.rotation.y);
+
   //controls.update();
   renderer.render(scene, camera);
   //controls.update(); //adds mouse controls
 }
+animate();
 
 function earn() {
   click = click + 1;
@@ -271,8 +309,7 @@ function workMode() {
 setInterval(function () {
   scoreText.textContent = convertToMillion(Math.round(score));
   multiplierText.textContent = Math.round(multiplier * 10) / 10;
-  animate();
-}, 1000 / fps);
+}, 10);
 
 setInterval(function () {
   if (modeType == 1) {
