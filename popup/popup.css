@@ -116,7 +116,7 @@ li {
 }
 
 #upgrade-alert {
-  background-color: lightcoral;
+  background-color: rgb(255, 104, 104);
   display: block;
   width: 10px;
   height: 10px;

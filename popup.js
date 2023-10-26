@@ -1,5 +1,5 @@
 import * as THREE from "/node_modules/three/build/three.module.js";
-//import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls";
+
 const cameraX = 0;
 const cameraY = -5;
 const cameraZ = 1.5;
@@ -117,13 +117,9 @@ animate();
 setInterval(function () {
   scoreText.textContent = convertToMillion(Math.round(score));
   multiplierText.textContent = Math.round(multiplier * 10) / 10;
-  if (
-    (parseInt(upgradeAlert.getBoundingClientRect().left) !=
-      parseInt(upgradeButton.getBoundingClientRect().left) &&
-      score > cost) ||
-    score > passiveCost
-  ) {
-    upgradeAlert.style.left = upgradeButton.getBoundingClientRect().left + "px";
+  if (score > cost || score > passiveCost) {
+    upgradeAlert.style.left =
+      upgradeButton.getBoundingClientRect().left - 2 + "px";
     upgradeAlert.style.visibility = "visible";
   } else {
     upgradeAlert.style.visibility = "hidden";
@@ -203,7 +199,7 @@ function reset() {
 function spin() {
   spinAmount = document.getElementById("spin-amount").value;
   console.log(spinAmount);
-  if ((score > spinAmount || score == spinAmount) && spinning == false) {
+  if (score >= spinAmount && spinning == false && spinAmount > 0) {
     spinning = true;
     score = score - spinAmount;
     result.textContent = "Spinning...";
@@ -227,8 +223,10 @@ function spin() {
       //console.log("ya lost");
     }
     numberSpin();
-  } else {
+  } else if (score < spinAmount && spinning == false) {
     result.textContent = "Insufficient Funds!";
+  } else if (spinAmount == 0) {
+    result.textContent = "Input bet!";
   }
 }
 
@@ -335,9 +333,10 @@ function casinoMode() {
   workPage.style.left = -500 + "px";
   casinoPage.style.left = 0 + "px";
   let zoom = setInterval(function () {
-    if (camera.position.y != 0) {
-      camera.position.y += 0.1;
-      camera.position.z -= 0.05;
+    if (camera.position.y < -2) {
+      console.log(camera.position.y);
+      camera.position.y += 0.05;
+      camera.position.z -= 0.01;
     } else {
       clearInterval(zoom);
     }
@@ -353,9 +352,9 @@ function workMode() {
   workPage.style.left = 0 + "px";
   casinoPage.style.left = 500 + "px";
   let zoom = setInterval(function () {
-    if (camera.position.y) {
-      camera.position.y -= 0.1;
-      camera.position.z += 0.05;
+    if (camera.position.y != cameraY) {
+      camera.position.y -= 0.05;
+      camera.position.z += 0.01;
     } else {
       clearInterval(zoom);
     }
