@@ -1,5 +1,49 @@
 import * as THREE from "/node_modules/three/build/three.module.js";
 //import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls";
+const cameraX = 0;
+const cameraY = -5;
+const cameraZ = 1.5;
+const cameraRotationX = convertDegree(80);
+const cameraRotationY = convertDegree(0);
+const cameraRotationZ = convertDegree(0);
+const fps = 60;
+const clickButton = document.querySelector(".click-button");
+const scoreText = document.getElementById("score-text");
+const multiplierText = document.getElementById("multiplier-text");
+const eps = document.getElementById("earn-per-second");
+const buyButton = document.querySelector(".buy-button");
+const buyButtonCost = document.getElementById("cost");
+const passiveButton = document.querySelector(".passive-button");
+const passiveButtonCost = document.getElementById("passive-cost");
+const resetButton = document.querySelector(".reset-button");
+const spinButton = document.querySelector(".spin-button");
+const work = document.querySelector(".work");
+const casino = document.querySelector(".casino");
+const upgradeButton = document.querySelector(".upgrade-page-button");
+const workPage = document.getElementById("work-page");
+const casinoPage = document.getElementById("casino-page");
+const upgradePage = document.getElementById("upgrade-page");
+const upgradeAlert = document.getElementById("upgrade-alert");
+const idle = document.getElementById("idle");
+const result = document.querySelector(".result");
+const num1 = document.querySelector(".spin-1");
+const num2 = document.querySelector(".spin-2");
+const num3 = document.querySelector(".spin-3");
+let score = 0;
+let click = 0;
+let passive = 1;
+let multiplier = 1;
+let cost = 50;
+let passiveCost = 50;
+let chance;
+let modeType = 1;
+let spinning = false;
+let winType = 0;
+let winLocation = 0;
+let spinAmount;
+const gambleTime = 750; //in milliseconds
+
+//3d setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   30,
@@ -12,16 +56,9 @@ const renderer = new THREE.WebGLRenderer({
 });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(1.5);
-camera.position.setX(0);
-camera.position.setY(-5);
+cameraReset();
 
-camera.rotation.x = (6.3 / 360) * 80;
-camera.rotation.z = 0;
-camera.rotation.y = 0;
-
-//const controls = OrbitControls(camera, renderer.domElement);
-
+//3d object setup
 const floorGeometry = new THREE.BoxGeometry(10, 1, 7);
 const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 const floorPlane = new THREE.Mesh(floorGeometry, floorMaterial);
@@ -64,45 +101,6 @@ scene.add(building);
 scene.add(island);
 //scene.add(pointLightHelper);
 
-const fps = 60;
-const clickButton = document.querySelector(".click-button");
-const scoreText = document.getElementById("score-text");
-const multiplierText = document.getElementById("multiplier-text");
-const eps = document.getElementById("earn-per-second");
-const buyButton = document.querySelector(".buy-button");
-const buyButtonCost = document.getElementById("cost");
-const passiveButton = document.querySelector(".passive-button");
-const passiveButtonCost = document.getElementById("passive-cost");
-const resetButton = document.querySelector(".reset-button");
-const spinButton = document.querySelector(".spin-button");
-const work = document.querySelector(".work");
-const casino = document.querySelector(".casino");
-const upgradeButton = document.querySelector(".upgrade-page-button");
-const workPage = document.getElementById("work-page");
-const casinoPage = document.getElementById("casino-page");
-const upgradePage = document.getElementById("upgrade-page");
-const upgradeAlert = document.getElementById("upgrade-alert");
-const idle = document.getElementById("idle");
-const result = document.querySelector(".result");
-const num1 = document.querySelector(".spin-1");
-const num2 = document.querySelector(".spin-2");
-const num3 = document.querySelector(".spin-3");
-let score = 0;
-let click = 0;
-let passive = 1;
-let multiplier = 1;
-let cost = 50;
-let passiveCost = 50;
-let chance;
-let modeType = 1;
-let spinning = false;
-let winType = 0;
-let winLocation = 0;
-let spinAmount;
-const gambleTime = 750; //in milliseconds
-workMode();
-getData();
-
 clickButton.addEventListener("click", earn);
 buyButton.addEventListener("click", buy);
 passiveButton.addEventListener("click", passiveBuy);
@@ -111,6 +109,37 @@ spinButton.addEventListener("click", spin);
 work.addEventListener("click", workMode);
 casino.addEventListener("click", casinoMode);
 upgradeButton.addEventListener("click", upgradeMode);
+
+workMode();
+getData();
+animate();
+
+setInterval(function () {
+  scoreText.textContent = convertToMillion(Math.round(score));
+  multiplierText.textContent = Math.round(multiplier * 10) / 10;
+  if (
+    (parseInt(upgradeAlert.getBoundingClientRect().left) !=
+      parseInt(upgradeButton.getBoundingClientRect().left) &&
+      score > cost) ||
+    score > passiveCost
+  ) {
+    upgradeAlert.style.left = upgradeButton.getBoundingClientRect().left + "px";
+    upgradeAlert.style.visibility = "visible";
+  } else {
+    upgradeAlert.style.visibility = "hidden";
+  }
+}, 10);
+
+setInterval(function () {
+  if (modeType == 1) {
+    score = score + passive * multiplier;
+    eps.textContent = convertToMillion(
+      Math.round((click * multiplier + passive * multiplier) * 10) / 10
+    );
+    click = 0;
+  }
+  storeData();
+}, 1000);
 
 function animate() {
   requestAnimationFrame(animate);
@@ -130,9 +159,6 @@ function animate() {
   renderer.render(scene, camera);
   //controls.update(); //adds mouse controls
 }
-animate();
-
-function cameraNormal() {}
 
 function earn() {
   click = click + 1;
@@ -309,9 +335,9 @@ function casinoMode() {
   workPage.style.left = -500 + "px";
   casinoPage.style.left = 0 + "px";
   let zoom = setInterval(function () {
-    if (camera.position.y) {
-      camera.position.y += 0.01;
-      camera.position.z -= 0.005;
+    if (camera.position.y != 0) {
+      camera.position.y += 0.1;
+      camera.position.z -= 0.05;
     } else {
       clearInterval(zoom);
     }
@@ -326,6 +352,14 @@ function workMode() {
   // work.style.left = 0 + "px";
   workPage.style.left = 0 + "px";
   casinoPage.style.left = 500 + "px";
+  let zoom = setInterval(function () {
+    if (camera.position.y) {
+      camera.position.y -= 0.1;
+      camera.position.z += 0.05;
+    } else {
+      clearInterval(zoom);
+    }
+  }, 10);
 }
 
 function upgradeMode() {
@@ -337,35 +371,6 @@ function upgradeMode() {
     upgradePage.style.top = 477 + "px";
   }
 }
-
-setInterval(function () {
-  scoreText.textContent = convertToMillion(Math.round(score));
-  multiplierText.textContent = Math.round(multiplier * 10) / 10;
-  if (
-    (parseInt(upgradeAlert.getBoundingClientRect().left) !=
-      parseInt(upgradeButton.getBoundingClientRect().left) &&
-      score > cost) ||
-    score > passiveCost
-  ) {
-    upgradeAlert.style.left = upgradeButton.getBoundingClientRect().left + "px";
-    upgradeAlert.style.visibility = "visible";
-    console.log("show");
-  } else {
-    upgradeAlert.style.visibility = "hidden";
-    console.log("hidd");
-  }
-}, 10);
-
-setInterval(function () {
-  if (modeType == 1) {
-    score = score + passive * multiplier;
-    eps.textContent = convertToMillion(
-      Math.round((click * multiplier + passive * multiplier) * 10) / 10
-    );
-    click = 0;
-  }
-  storeData();
-}, 1000);
 
 function getData() {
   chrome.storage.local.get(["scoreStored"]).then((resultScore) => {
@@ -447,4 +452,18 @@ function convertToMillion(labelValue) {
     Math.abs(Number(labelValue)) >= 1.0e3
     ? (Math.abs(Number(labelValue)) / 1.0e3).toFixed(2) + "K"
     : Math.abs(Number(labelValue));
+}
+
+function convertDegree(degree) {
+  return (6.3 / 360) * degree;
+}
+
+function cameraReset() {
+  camera.position.setX(cameraX);
+  camera.position.setY(cameraY);
+  camera.position.setZ(cameraZ);
+
+  camera.rotation.x = cameraRotationX;
+  camera.rotation.y = cameraRotationY;
+  camera.rotation.z = cameraRotationZ;
 }
