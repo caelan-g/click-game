@@ -19,6 +19,7 @@
     </h1>
     <container id="work-page">
       <!-- <h1>Gamblers Paradise</h1> -->
+      <button class="click-button"><h2>EARN</h2></button>
       <p>
         <li>Earnings p/second: $</li>
         <li id="earn-per-second">0</li>
@@ -27,23 +28,27 @@
         <li>Multiplier: </li>
         <li id="multiplier-text">1</li>
       </p>
-      <button class="click-button"><h2>EARN</h2></button>
       <p>
         <li>Workers:</li>
         <li id="idle">0</li>
       </p>
-      <button class="buy-button">
-        <p>Upgrade Equipment</p>
-        <p>cost: <div id="cost">$50</div></p>
-      </button>
-      <button class="passive-button">
-        <p>Hire Worker</p>
-        <p>cost: <div id="passive-cost">$50</div></p>
-      </button>
-      <br>
       <button class="reset-button">
         <p>reset</p>
       </button>
+    </container>
+    <container id="upgrade-page">
+      <div id="upgrade-alert"></div>
+      <div class="upgrade-page-button">Upgrades</div>
+      <container id="upgrade-page-content">
+        <button class="buy-button">
+          <p>Upgrade Equipment</p>
+          <p>cost: <div id="cost">$50</div></p>
+        </button>
+        <button class="passive-button">
+          <p>Hire Worker</p>
+          <p>cost: <div id="passive-cost">$50</div></p>
+        </button>
+      </container>
     </container>
     <container id="casino-page">
       <container class="spin-container"><h1 class="spin-1">7</h1><h1 class="spin-2">7</h1><h1 class="spin-3">7</h1></container>

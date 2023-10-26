@@ -75,8 +75,11 @@ const resetButton = document.querySelector(".reset-button");
 const spinButton = document.querySelector(".spin-button");
 const work = document.querySelector(".work");
 const casino = document.querySelector(".casino");
+const upgradeButton = document.querySelector(".upgrade-page-button");
 const workPage = document.getElementById("work-page");
 const casinoPage = document.getElementById("casino-page");
+const upgradePage = document.getElementById("upgrade-page");
+const upgradeAlert = document.getElementById("upgrade-alert");
 const idle = document.getElementById("idle");
 const result = document.querySelector(".result");
 const num1 = document.querySelector(".spin-1");
@@ -105,6 +108,7 @@ resetButton.addEventListener("click", reset);
 spinButton.addEventListener("click", spin);
 work.addEventListener("click", workMode);
 casino.addEventListener("click", casinoMode);
+upgradeButton.addEventListener("click", upgradeMode);
 
 function animate() {
   requestAnimationFrame(animate);
@@ -186,7 +190,6 @@ function spin() {
       //console.log("massive win");
     } else {
       winType = 0;
-      result.textContent = "Loss!";
       //console.log("ya lost");
     }
     numberSpin();
@@ -270,6 +273,8 @@ function numberSpin() {
         result.textContent = "25x Your Spin!";
         score = score + spinAmount * 25;
         num3.textContent = 7;
+      } else if (winType == 0) {
+        result.textContent = "Loss!";
       } else {
         //if no win or small win
         num3.textContent = num3Random;
@@ -306,9 +311,32 @@ function workMode() {
   casinoPage.style.left = 500 + "px";
 }
 
+function upgradeMode() {
+  if (modeType != 3) {
+    modeType = 3;
+    upgradePage.style.top = 300 + "px";
+  } else {
+    modeType = 1;
+    upgradePage.style.top = 477 + "px";
+  }
+}
+
 setInterval(function () {
   scoreText.textContent = convertToMillion(Math.round(score));
   multiplierText.textContent = Math.round(multiplier * 10) / 10;
+  if (
+    (parseInt(upgradeAlert.getBoundingClientRect().left) !=
+      parseInt(upgradeButton.getBoundingClientRect().left) &&
+      score > cost) ||
+    score > passiveCost
+  ) {
+    upgradeAlert.style.left = upgradeButton.getBoundingClientRect().left + "px";
+    upgradeAlert.style.visibility = "visible";
+    console.log("show");
+  } else {
+    upgradeAlert.style.visibility = "hidden";
+    console.log("hidd");
+  }
 }, 10);
 
 setInterval(function () {
@@ -335,7 +363,7 @@ function getData() {
     //console.log("passive currently is " + resultPassive.passiveStored);
     //score = score.scoreStored;
     passive = resultPassive.passiveStored;
-    idle.textContent = "$" + Math.round(passive * 10) / 10;
+    idle.textContent = Math.round(passive * 10) / 10;
     if (passive === undefined) {
       passive = 0;
     }
@@ -357,7 +385,8 @@ function getData() {
     if (cost === undefined) {
       cost = 50;
     }
-    buyButtonCost.textContent = convertToMillion(Math.round(cost * 10) / 10);
+    buyButtonCost.textContent =
+      "$" + convertToMillion(Math.round(cost * 10) / 10);
   });
   chrome.storage.local.get(["passiveCostStored"]).then((resultPassiveCost) => {
     //console.log("cost currently is " + resultCost.costStored);
@@ -367,9 +396,8 @@ function getData() {
     if (passiveCost === undefined) {
       passiveCost = 50;
     }
-    passiveButtonCost.textContent = convertToMillion(
-      Math.round(passiveCost * 10) / 10
-    );
+    passiveButtonCost.textContent =
+      "$" + convertToMillion(Math.round(passiveCost * 10) / 10);
   });
 }
 
