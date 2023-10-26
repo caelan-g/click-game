@@ -17,6 +17,8 @@ camera.position.setX(0);
 camera.position.setY(-5);
 
 camera.rotation.x = (6.3 / 360) * 80;
+camera.rotation.z = 0;
+camera.rotation.y = 0;
 
 //const controls = OrbitControls(camera, renderer.domElement);
 
@@ -113,8 +115,12 @@ upgradeButton.addEventListener("click", upgradeMode);
 function animate() {
   requestAnimationFrame(animate);
 
-  island.rotation.z += 0.01;
-  building.rotation.z += 0.01;
+  if (workMode == 2) {
+  } else {
+    island.rotation.z += 0.01;
+    building.rotation.z += 0.01;
+  }
+
   //camera.rotation.y += 0.01;
   //console.log(camera.rotation.y);
 
@@ -125,6 +131,8 @@ function animate() {
   //controls.update(); //adds mouse controls
 }
 animate();
+
+function cameraNormal() {}
 
 function earn() {
   click = click + 1;
@@ -293,12 +301,21 @@ function numberSpin() {
 
 function casinoMode() {
   modeType = 2;
+  let i = 0;
   work.style.scale = 1;
   casino.style.scale = 1.1;
   // work.style.left = -100 + "px";
   // casino.style.left = 0 + "px";
   workPage.style.left = -500 + "px";
   casinoPage.style.left = 0 + "px";
+  let zoom = setInterval(function () {
+    if (camera.position.y) {
+      camera.position.y += 0.01;
+      camera.position.z -= 0.005;
+    } else {
+      clearInterval(zoom);
+    }
+  }, 10);
 }
 
 function workMode() {
